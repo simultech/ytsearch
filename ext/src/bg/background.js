@@ -9,5 +9,8 @@
 chrome.extension.onMessage.addListener(
   function(request, sender, sendResponse) {
   	chrome.pageAction.show(sender.tab.id);
+  	console.log('THIS IS A BACKGROUND SCRIPT');
     sendResponse();
   });
+
+console.log('winner');
