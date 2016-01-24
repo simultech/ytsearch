@@ -104,7 +104,7 @@ function complete(data) {
 		'display': 'block'
 	});
 	captions.css({
-		'margin': '0',
+		'margin': '0 auto',
 		'text-align': 'center',
 		'line-height': 0,
 		'font-size': '80%',
@@ -138,13 +138,14 @@ function renderCaptions() {
 	var width = vWidth;
 
 	$('#ytsearch').width(vWidth-10);
+	$('#captions').width(vWidth);
 	$('#resultNum').css({'margin-left':(vWidth-90)+'px'});
 	
 	var searchProgressBar = $('<div id="searchProgressBar"></div>');
 	searchProgressBar.css({
 		'background-color': 'white',
 		'height': '10px',
-		'width': width+'px',
+		'width': (width-2)+'px',
 		'border': '1px solid #999',
 		'margin': '14px auto',
 		'display': 'block',
@@ -206,6 +207,7 @@ include('https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js', func
 		$('.ytp-button').click(function() { renderCaptions(); });
 		$("<style type='text/css'> .watch-non-stage-mode #searchProgressBar { margin:-11px 0 14px !important; } </style>").appendTo("head");
 		$("<style type='text/css'> .watch-non-stage-mode #ytsearch { margin:14px 0 !important; } </style>").appendTo("head");
+		$("<style type='text/css'> .watch-non-stage-mode #captions { margin:0 !important; } </style>").appendTo("head");
     	watchForPageChange();
         initialize();
     });
