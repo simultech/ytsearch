@@ -183,7 +183,7 @@ include('https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js', func
 			renderCaptions();
 		});
 		$('.ytp-button').click(function() { renderCaptions(); });
-		$("<style type='text/css'> .watch-non-stage-mode #searchProgressBar { margin:0 !important; } </style>").appendTo("head");
+		$("<style type='text/css'> .watch-non-stage-mode #searchProgressBar { margin:-11px 0 14px !important; } </style>").appendTo("head");
 		$("<style type='text/css'> .watch-non-stage-mode #ytsearch { margin:14px 0 !important; } </style>").appendTo("head");
     	watchForPageChange();
         initialize();
