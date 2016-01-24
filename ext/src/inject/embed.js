@@ -1,5 +1,6 @@
 var searchText = [];
 var captionsURL = "";
+var captionsData = "";
 
 var lastTerm = "";
 
@@ -78,6 +79,7 @@ function getCaptions(captionsURL, tryagain) {
 }
 
 function complete(data) {
+	captionsData = data;
 	var vWidth = $('video').width();
 	var width = vWidth;
 
@@ -87,7 +89,7 @@ function complete(data) {
 	ytsearch.css({
 		'font-size': '140%',
 		'padding': '4px',
-		'width': vWidth+'px',
+		'width': (vWidth-10)+'px',
 		'margin': '14px auto',
 		'display': 'block'
 	});
@@ -105,7 +107,19 @@ function complete(data) {
 			doSearch();
 	});
 
-	var searchProgressBar = $('<div></div>');
+	renderCaptions();
+}
+
+function renderCaptions() {
+
+	$('#searchProgressBar').remove();
+
+	var vWidth = $('video').width();
+	var width = vWidth;
+
+	$('#ytsearch').width(vWidth-10);
+	
+	var searchProgressBar = $('<div id="searchProgressBar"></div>');
 	searchProgressBar.css({
 		'background-color': 'white',
 		'height': '10px',
@@ -120,55 +134,57 @@ function complete(data) {
 
 	searchProgressBar.insertAfter($("#placeholder-player"));
 
-	captions = $(data).find('transcript').find('text');
-		for(var i=0; i<captions.length; i++) {
-			var duration = yt.player.getPlayerByElement("player-api").getDuration();
-			var xpos = parseFloat(captions[i].getAttribute('start'))/parseFloat(duration) * width;
-			var length = parseFloat(captions[i].getAttribute('dur'))/parseFloat(duration) * width;
-			var el = $('<div></div>');
-			el.css({
-				'background-color': '#fdd',
-				'width': length+'px',
-				'left': xpos+'px',
-				'position':'absolute',
-				'height':'10px',
-				'visibility':'hidden'
-			});
-			el.data('start',captions[i].getAttribute('start'));
-			el.data('text',captions[i].innerHTML);
-			el.click(function() {
-				yt.player.getPlayerByElement("player-api").seekTo($(this).data('start'));
-				setText($(this).data('text'));
-			});
-			searchText.push({el: el, text: captions[i].innerHTML.toLowerCase(), start: captions[i].getAttribute('start'), duration: captions[i].getAttribute('dur')});
-			searchProgressBar.append(el);
-		}
-
-		var searchProgressBarCurrentTime = $('<div id="yttimeline"></div>');
-		searchProgressBarCurrentTime.css({
-			'background-color': 'red',
-			'width': '2px',
-			'height': '10px',
-			'left': '0px',
-			'position': 'absolute'
+	captions = $(captionsData).find('transcript').find('text');
+	for(var i=0; i<captions.length; i++) {
+		var duration = yt.player.getPlayerByElement("player-api").getDuration();
+		var xpos = parseFloat(captions[i].getAttribute('start'))/parseFloat(duration) * width;
+		var length = parseFloat(captions[i].getAttribute('dur'))/parseFloat(duration) * width;
+		var el = $('<div></div>');
+		el.css({
+			'background-color': '#fdd',
+			'width': length+'px',
+			'left': xpos+'px',
+			'position':'absolute',
+			'height':'10px',
+			'visibility':'hidden'
 		});
-		searchProgressBar.append(searchProgressBarCurrentTime);
+		el.data('start',captions[i].getAttribute('start'));
+		el.data('text',captions[i].innerHTML);
+		el.click(function() {
+			yt.player.getPlayerByElement("player-api").seekTo($(this).data('start'));
+			setText($(this).data('text'));
+		});
+		searchText.push({el: el, text: captions[i].innerHTML.toLowerCase(), start: captions[i].getAttribute('start'), duration: captions[i].getAttribute('dur')});
+		searchProgressBar.append(el);
+	}
 
-		setInterval(function() {
-			var currentTime = yt.player.getPlayerByElement("player-api").getCurrentTime();
-			var duration = yt.player.getPlayerByElement("player-api").getDuration();
-			var xpos = parseFloat(currentTime)/parseFloat(duration) * width;
-			searchProgressBarCurrentTime.css({'left': xpos});
-		},200);
+	var searchProgressBarCurrentTime = $('<div id="yttimeline"></div>');
+	searchProgressBarCurrentTime.css({
+		'background-color': 'red',
+		'width': '2px',
+		'height': '10px',
+		'left': '0px',
+		'position': 'absolute'
+	});
+	searchProgressBar.append(searchProgressBarCurrentTime);
+
+	setInterval(function() {
+		var currentTime = yt.player.getPlayerByElement("player-api").getCurrentTime();
+		var duration = yt.player.getPlayerByElement("player-api").getDuration();
+		var xpos = parseFloat(currentTime)/parseFloat(duration) * width;
+		searchProgressBarCurrentTime.css({'left': xpos});
+	},200);
 }
 
 
 include('https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js', function() {
     $(document).ready(function() {
     	$( window ).resize(function() {
-			vWidth = $('video').width();
-			$('#ytsearch').width(vWidth);
+			renderCaptions();
 		});
+		$('.ytp-button').click(function() { renderCaptions(); });
+		$("<style type='text/css'> .watch-non-stage-mode #searchProgressBar { margin:0 !important; } </style>").appendTo("head");
+		$("<style type='text/css'> .watch-non-stage-mode #ytsearch { margin:14px 0 !important; } </style>").appendTo("head");
     	watchForPageChange();
         initialize();
     });
