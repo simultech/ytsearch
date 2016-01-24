@@ -36,11 +36,23 @@ function doSearch() {
 	if(!found) {
 		setText('');
 	}
+	//Later - synonyms
+	// $.ajax({
+	// 	url: 'https://words.bighugelabs.com/api/2/fde6921b4787a02d86c61a73f94f9f33/'+searchTerm+'/json',
+	// 	dataType: 'json',
+	// 	success: function(data) {
+	// 		var syns = [];
+	// 		for(var type in data) {
+	// 			console.log(data[type].syn);
+	// 			syns.concat(data[type].syn);
+	// 		}
+	// 		console.log("SYN DATA");
+	// 		console.log(syns);
+ //  		},
+	// });
 }
 
 function initialize() {
-
-	console.log('====STARTING SCRIPT====');
 	searchText = [];
 	captionsURL = ytplayer.config.args.ttsurl + "&kind=asr&lang=en&fmt=srv1";
 	lastTerm = "";
@@ -148,8 +160,6 @@ function complete(data) {
 			var xpos = parseFloat(currentTime)/parseFloat(duration) * width;
 			searchProgressBarCurrentTime.css({'left': xpos});
 		},200);
-
-	console.log("Loaded");
 }
 
 
@@ -158,7 +168,6 @@ include('https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js', func
     	$( window ).resize(function() {
 			vWidth = $('video').width();
 			$('#ytsearch').width(vWidth);
-  			console.log('resizing');
 		});
     	watchForPageChange();
         initialize();
@@ -170,7 +179,6 @@ function watchForPageChange() {
 	var target = document.querySelector('head > title');
 	var observer = new window.WebKitMutationObserver(function(mutations) {
     	mutations.forEach(function(mutation) {
-        	console.log('Page changed');
         	initialize();
     	});
 	});
