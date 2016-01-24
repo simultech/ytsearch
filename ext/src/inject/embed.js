@@ -14,6 +14,7 @@ function setText(text) {
 }
 
 function doSearch() {
+	var results = 0;
 	var found = false;
 	var searchTerm = $('#ytsearch').val();
 	if(searchTerm == lastTerm) {
@@ -30,12 +31,19 @@ function doSearch() {
 				found = true;
 			}
 			searchText[i].el.css({'visibility':'visible'});
+			results += 1;
 		} else {
 			searchText[i].el.css({'visibility':'hidden'});
 		}
 	}
+	if(results != 1) {
+		$('#resultNum').text(results + ' results');	
+	} else {
+		$('#resultNum').text('1 result');	
+	}
 	if(!found) {
 		setText('');
+		$('#resultNum').html('&nbsp;');
 	}
 	//Later - synonyms
 	// $.ajax({
@@ -85,6 +93,8 @@ function complete(data) {
 
 	var ytsearch = $('<input type="text" id="ytsearch" placeholder="Instant Search" />');
 	var captions = $('<p id="captions">&nbsp;</p>');
+	var resultNum = $('<p id="resultNum">&nbsp;</p>');
+	
 
 	ytsearch.css({
 		'font-size': '140%',
@@ -100,8 +110,18 @@ function complete(data) {
 		'font-size': '80%',
 		'color': '#777'
 	});
+	resultNum.css({
+		'width': '80px',
+		'color': '#999',
+		'margin-left': '600px',
+		'text-align': 'right',
+		'margin-top': '-36px',
+		'margin-bottom': '36px',
+		'font-size': '80%'
+	});
 
 	ytsearch.insertAfter($("#placeholder-player"));
+	resultNum.insertAfter(ytsearch);
 	captions.insertBefore(ytsearch);
 	ytsearch.keyup(function() {
 			doSearch();
@@ -118,6 +138,7 @@ function renderCaptions() {
 	var width = vWidth;
 
 	$('#ytsearch').width(vWidth-10);
+	$('#resultNum').css({'margin-left':(vWidth-90)+'px'});
 	
 	var searchProgressBar = $('<div id="searchProgressBar"></div>');
 	searchProgressBar.css({
